@@ -1,0 +1,28 @@
+{
+  "name": "expressapp",
+  "version": "1.0.0",
+  "description": "Hello world express app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "import-db": "git clone https://github.com/viruzx/pggr-db",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "4.1.1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "connect": "^3.5.0",
+    "cookie-parser": "^1.4.3",
+    "curl": "^0.1.4",
+    "express": "^4.14.0",
+    "nodemailer": "^2.6.4",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "request": "^2.79.0",
+    "sendgrid": "^4.7.1",
+    "sqlite3": "^3.1.8"
+  }
+}

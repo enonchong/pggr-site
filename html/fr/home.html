@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="fr">
+<head>
+    <script>
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            }
+            return "";
+        }
+        if (getCookie("lang") != "FR" && getCookie("lang") != "") {
+            location.reload(true);
+        }
+    </script>
+    <link href='https://fonts.googleapis.com/css?family=Bitter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css" media="screen"/>
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>PGGR | Petits Gestes Grands Résultats</title>
+    <style>
+        #socialbar {
+            width: 140px;
+        }
+    </style>
+    <script type='text/javascript' src="/static/js/scripts.js"></script>
+</head>
+<body>
+<div id="socialbar">Nous joindre<span class="arrow">►</span>
+    <a href="https://www.facebook.com/pages/PGGR/159812014109211"><img src="/static/img/facebook.png" alt=""
+                                                                       title="Facebook"/></a>&nbsp
+    <a href="https://twitter.com/pggr_org"><img src="/static/img/twitter.png" alt="" title="Twitter"/></a>&nbsp
+    <a href="https://www.youtube.com/channel/UCEC3JDXmfrTt3TiHbNyaBbw"><img src="/static/img/youtube.png" alt=""
+                                                                            title="Youtube"/></a>
+</div>
+<div id="languagebar">
+    <a href="#" onclick='
+        document.cookie = "lang=FR; max-age=" + 60*60*24*30 + "; path=/; domain=pggr.org";location.reload();
+        '>Français</a>
+    <a href="#" onclick='
+        document.cookie = "lang=EN; max-age=" + 60*60*24*30 + "; path=/; domain=pggr.org";location.reload();
+        '>English</a>
+</div>
+ <header> <nav> <a href="/contact">Contactez-nous</a> <a href="/gallery">Galerie</a> <a href="/history">Historique</a> <a href="/about">À propos</a> <a href="/home">Accueil</a> <img src="/static/img/logo.png" title="Bienvenu sur PGGR.org!" alt="" class="logo"/> <img src="/static/img/logo_texte.png" alt="" class="logo_texte"/> </nav> </header>
+<div id="wrapper">
+    <script>!function(){var a=function(a,b){var c=document.createElement("canvas");"undefined"!=typeof G_vmlCanvasManager&&G_vmlCanvasManager.initElement(c);var d=c.getContext("2d");if(c.width=c.height=b.size,a.appendChild(c),window.devicePixelRatio>1){var e=window.devicePixelRatio;c.style.width=c.style.height=[b.size,"px"].join(""),c.width=c.height=b.size*e,d.scale(e,e)}d.translate(b.size/2,b.size/2),d.rotate((-0.5+b.rotate/180)*Math.PI);var f=(b.size-b.lineWidth)/2;b.scaleColor&&b.scaleLength&&(f-=b.scaleLength+2);var g=function(a,b,c){c=Math.min(Math.max(0,c||1),1),d.beginPath(),d.arc(0,0,f,0,2*Math.PI*c,!1),d.strokeStyle=a,d.lineWidth=b,d.stroke()},h=function(){var a,c,e=24;d.lineWidth=1,d.fillStyle=b.scaleColor,d.save();for(var e=24;e>=0;--e)0===e%6?(c=b.scaleLength,a=0):(c=.6*b.scaleLength,a=b.scaleLength-c),d.fillRect(-b.size/2+a,0,c,1),d.rotate(Math.PI/12);d.restore()};Date.now=Date.now||function(){return+new Date};var i=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||function(a){window.setTimeout(a,1e3/60)}}();this.clear=function(){d.clearRect(b.size/-2,b.size/-2,b.size,b.size)},this.draw=function(a){this.clear(),b.scaleColor&&h(),b.trackColor&&g(b.trackColor,b.lineWidth),d.lineCap=b.lineCap;var c;c="function"==typeof b.barColor?b.barColor(a):b.barColor,a>0&&g(c,b.lineWidth,a/100)}.bind(this),this.animate=function(a,c){var d=Date.now();b.onStart(a,c);var e=function(){var f=Math.min(Date.now()-d,b.animate),g=b.easing(this,f,a,c-a,b.animate);this.draw(g),b.onStep(a,c,g),f>=b.animate?b.onStop(a,c):i(e)}.bind(this);i(e)}.bind(this)},b=function(b,c){var d,e={barColor:"#ef1e25",trackColor:"#f9f9f9",scaleColor:"#dfe0e0",scaleLength:5,lineCap:"round",lineWidth:3,size:110,rotate:0,animate:1e3,renderer:a,easing:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b+c:-d/2*(--b*(b-2)-1)+c},onStart:function(){},onStep:function(){},onStop:function(){}},f={},g=0,h=function(){this.el=b,this.options=f;for(var a in e)e.hasOwnProperty(a)&&(f[a]=c&&"undefined"!=typeof c[a]?c[a]:e[a],"function"==typeof f[a]&&(f[a]=f[a].bind(this)));f.easing="string"==typeof f.easing&&"undefined"!=typeof jQuery&&jQuery.isFunction(jQuery.easing[f.easing])?jQuery.easing[f.easing]:e.easing,d=new f.renderer(b,f),d.draw(g),b.dataset&&b.dataset.percent&&this.update(parseInt(b.dataset.percent,10))}.bind(this);this.update=function(a){return a=parseInt(a,10),f.animate?d.animate(g,a):d.draw(a),g=a,this}.bind(this),h()};window.EasyPieChart=b}(); $(function() { var options = { scaleColor: false, trackColor: 'rgba(255,255,255,0.3)', barColor: '#00FF03', lineWidth: 6, lineCap: 'butt', size: 150}; $('.stats').waypoint(function() { var charts = []; [].forEach.call(document.querySelectorAll('.chart'), function(el) { charts.push(new EasyPieChart(el, options)); }); }, { offset: '100%' }); });</script><section id="section"><article><h1>Bienvenue</h1><p>Comment améliorer le sort réservé à notre planète? Simple, adoptez la mentalité PGGR!! Parce qu'un mouvement collectif commence par l'implication des individus.</p><p align="center"><b>PGGR, J'embarque, J'en parle, J'le fais. 2 déchets par jour, C'EST TOUT.</b></p><p>Dans L'ACTION naît le CHANGEMENT.</p><img src="images/students-logo.png" alt="" title="Érablière 2014-2015"/></article><article><h1>PGGR Autour du Monde!</h1><iframe id="map" src="/static/html/map.html" style="border:none;width:100%;height:500px"></iframe><div class="stats" style="display:none;"> <ul> <li class="chart" data-percent="100"><span class="counter">1968</span>Participants</li> <li class="chart" data-percent="100"><span class="counter">3936</span>Déchets Par Jour</li> <li class="chart" data-percent="100"><span class="counter">2394</span>Sacs Par Année</li></ul></div></article><article><h1>Suivez-Nous Sur Facebook!</h1><center><div id="fb-root"></div><script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3"; fjs.parentNode.insertBefore(js, fjs);}(document, 'script', 'facebook-jssdk'));</script><div class="fb-page" data-href="https://www.facebook.com/pages/PGGR/159812014109211" data-width="600" data-hide-cover="false" data-show-facepile="true" data-show-posts="true"><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/facebook"><a href="https://www.facebook.com/facebook">Facebook</a></blockquote></div></div></center></article></section>
+    <div class="sidebar">
+        <div class="parentside">
+            <aside id="sidebar">
+                <article><h1>Engagez-Vous!</h1><br/><form method="POST"><input class="textinput" name="postal" id="post" placeholder="Code Postal" maxlength="16" type="text" required /><input class="textinput" name="qtn" id="qtn" value="1" type="hidden" required /><input class="textinput" name="contact" id="contact" placeholder="Votre Courriel" type="type" required /><input type="checkbox" required>Je m'engage a ramasser 2 déchets par jour!<br/><br/><input class="btnenvoyer" type="submit" name="join" id="join" value="Joindre" style="margin: 0;"/></form></article></aside><aside id="sidebar"><article><h1>Partenaires</h1><br/><a href="http://www.csdraveurs.qc.ca/ScriptorWeb/scripto.asp?resultat=485684"><img src="/static/img/erabliere_logo.jpg" alt="" title="Polyvalente de l'Érablière"/></a><br/><br/><a href="http://apelimbour.org/"><img src="/static/img/apel_logo.png" alt="" title="L'Association Pour l'Environnement du quartier Limbour"/></a><a href="https://www.csdraveurs.qc.ca/"><img src="/static/img/CS_Draveurs.jpg" alt="" title="CSD"/></a></article>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+    <a href="/home">Home/Accueil &nbsp;</a> |
+    <a href="/about">&nbsp; About/A propos &nbsp; </a> |
+    <a href="/history">&nbsp; History/Historique &nbsp; </a> |
+    <a href="/gallery">&nbsp; Gallery/Galerie &nbsp; </a> |
+    <a href="/contact">&nbsp; Contact/Contacte </a>
+
+    <p>Tous les droits réservés © 2015-2016 PGGR.org (Site par <a href="https://www.knyz.org/">KNYZ.org</a>)</p>
+</footer>
+
+<script>
+    $(document).ready(function () {
+        $(".parentside").sticky({topSpacing: 0, bottomSpacing: 200});
+    });
+
+
+    jQuery(document).ready(function ($) {
+        $('.counter').counterUp({
+            delay: 10,
+            time: 700
+        });
+    });
+    //This script opens all external links in new windows/tabs
+    $("a[href^='http://'], a[href^='https://']").click(function () {
+        $(this).attr("target", "_blank");
+    });
+    $("a[href^='http://www.pggr.org'],a[href^='http://pggr.org']").click(function () {
+        $(this).attr("target", "_self");
+    });
+
+</script>
+<link rel="shortcut icon" href="/static/img/favicon.png">
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+
+    ga('create', 'UA-57611955-2', 'auto');
+
+    ga('send', 'pageview');
+
+
+</script>
+</body>
+</html>
