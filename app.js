@@ -1,3 +1,4 @@
+//Dependencies, all is needed. No touching.
 var express = require('express');
 var app = express();
 var fs = require("fs");
@@ -5,19 +6,36 @@ var request = require('request');
 var Crypto = require('crypto');
 var bodyParser = require('body-parser')
 
+//Express pre-configurations
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
+app.use(bodyParser.json())
+
+
+//If this line is removed, everything breaks.
+var compiled = "";
+
+//Mailing services start
+
+//Configure SendGrid mailing service
 var nodemailer = require('nodemailer');
 var sgTransport = require('nodemailer-sendgrid-transport');
 var mailer = nodemailer.createTransport(sgTransport({
     auth: {
-        api_key: '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'
+        api_key: fs.readFileSync("sendgrid.key");
     }
 }));
 
+//Send email to a single person (Designed for subscriptions)
 function email(to, text, callback) {
     var email = {
+        //Does HAVE to be an array, but whatever.
         to: [to],
         from: 'noreply@pggr.org',
+        //Maybe change title
         subject: 'Hi there',
+        //Message body (consider using html)
         text: text
     };
 
@@ -29,11 +47,15 @@ function email(to, text, callback) {
     });
 }
 
+//Mass mailing (to is an array)
 function contact(to, from, subject, text, callback) {
     var email = {
         to: to,
+        //Spoof email address for convinience
         from: from,
+        //Custom subject
         subject: subject,
+        //Custom text with enforced signature
         text: text + "\n---------------\nDelivered from PGGR.org by SendGrid"
     };
 
@@ -45,43 +67,29 @@ function contact(to, from, subject, text, callback) {
     });
 }
 
+//Mailing services end
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({
-    extended: false
-}))
 
-// parse application/json
-app.use(bodyParser.json())
-var compiled = "";
-
-function randomStr() {
-    return Crypto.randomBytes(8).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
-}
-//Send web request
-function curl(url, callback) {
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            callback(body)
-        } else {
-            callback(false);
-        }
-    })
-}
 
 //SQLite Data Management
 var sqlite3 = require("sqlite3").verbose();
 var db = new sqlite3.Database("pggr-db/data.db");
 
 //Simplified Querying
-function sql(query, callback = function() {}) {
+/*
+    Just because it is abstracted, does NOT mean it is secure.
+    Escape queries with sqlesc() before passing.
+    sql("SELECT * FROM `TABLE` WHERE `x`=1")
+*/
+function sql(query, callback = function(rows) {
+    console.log("SQL Query ran")
+    console.log(rows.length, "rows");
+}) {
     db.all(query, function(err, rows) {
         if (err) {
             callback(false);
             return 1;
         }
-        console.log("SQL Query ran")
-        console.log(rows.length, "rows");
         callback(rows);
     });
 }
@@ -170,7 +178,9 @@ function openPage(lang, page, callback) {
     fs.readFile("html/" + lang + "/" + page + ".html", function(err, data) {
         if (err) {
             //file does not exist
-            fs.readFile("html/" + lang + "/" + "404.html", {encoding: 'utf-8'}, function(err, errorPage) {
+            fs.readFile("html/" + lang + "/" + "404.html", {
+                encoding: 'utf-8'
+            }, function(err, errorPage) {
                 //send 404 html
                 callback(errorPage);
             })
@@ -275,7 +285,7 @@ app.post('/dynamic/subscribe', function(req, res) {
 
 
 app.post('/dynamic/contact', function(req, res) {
-    contact(["", ""], req.body.from, req.body.subject , req.body.text ,function(success) {
+    contact(["", ""], req.body.from, req.body.subject, req.body.text, function(success) {
         if (success) {
             res.send("Sent");
         } else {
@@ -321,6 +331,22 @@ app.use(function(req, res, next) {
 
 });
 
+
+//Utility functions
+function randomStr() {
+    return Crypto.randomBytes(8).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
+}
+//Send web request
+function curl(url, callback) {
+    request(url, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            callback(body)
+        } else {
+            callback(false);
+        }
+    })
+}
+//Escape SQL
 function sqlesc(a) {
     return a.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(a) {
         switch (a) {
