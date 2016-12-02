@@ -12,6 +12,8 @@ To deploy the service, you need `git`, `node`, `npm` and appropriate cloning per
     cd pggr-site
     //Install required files
     npm install
+    //Import Database
+    npm run-script import-db
     //Deploy app
     npm start
 
