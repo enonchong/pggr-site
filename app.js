@@ -243,27 +243,27 @@ app.get('/:legacy', function(req, res, next) {
     switch (legacy) {
         case "home":
             res.statusCode = 302;
-            res.setHeader('Location', '/' + lang + '/home.html');
+            res.setHeader('Location', '/' + lang + '/home');
             res.end();
             break;
         case "about":
             res.statusCode = 302;
-            res.setHeader('Location', '/' + lang + '/home.html');
+            res.setHeader('Location', '/' + lang + '/home');
             res.end();
             break;
         case "history":
             res.statusCode = 302;
-            res.setHeader('Location', '/' + lang + '/home.html');
+            res.setHeader('Location', '/' + lang + '/home');
             res.end();
             break;
         case "gallery":
             res.statusCode = 302;
-            res.setHeader('Location', '/' + lang + '/home.html');
+            res.setHeader('Location', '/' + lang + '/home');
             res.end();
             break;
         case "contact":
             res.statusCode = 302;
-            res.setHeader('Location', '/' + lang + '/home.html');
+            res.setHeader('Location', '/' + lang + '/home');
             res.end();
             break;
         default:
@@ -314,24 +314,35 @@ app.get('/dynamic/compiled.js', function(req, res) {
 
 var pending = {};
 app.post('/dynamic/subscribe', function(req, res) {
-    var token = randomStr();
-    pending[token] = {
-        postal: req.body.postal,
-        contact: req.body.contact
-    };
-    email(req.body.contact, "You signed up, click here: http://localhost:3000/dynamic/confirm/" + token, function(success) {
-        if (success) {
-            res.send("Check email for confirmation link");
+    postal2coord("", function (lat, lng){
+        if (lat && lng){
+            var token = randomStr();
+            pending[token] = {
+                postal: req.body.postal,
+                contact: req.body.contact
+            };
+            email(req.body.contact, "You signed up, click here: http://localhost:3000/dynamic/confirm/" + token, function(success) {
+                if (success) {
+                    //Success
+                    res.send("1");
+                } else {
+                    //Internal error
+                    res.send("0");
+                }
+            });
         } else {
-            res.send("Something went wrong");
+            //Invalid Location
+            res.send("2");
         }
+
     });
+
 
 });
 
 
 app.post('/dynamic/contact', function(req, res) {
-    contact(["", ""], req.body.from, req.body.subject, req.body.text, function(success) {
+    contact(["slava@knyz.org"], req.body.from, req.body.subject, req.body.text, function(success) {
         if (success) {
             res.send("Sent");
         } else {
@@ -377,6 +388,9 @@ app.listen(process.env.PORT || 3000, function() {
     console.log('Deployed on port', process.env.PORT || 3000);
 });
 
+module.exports = {
+  app: app
+};
 
 //Utility functions
 function randomStr() {
