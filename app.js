@@ -1,7 +1,30 @@
+var fs = require("fs");
+//Check for required files
+if (!fs.existsSync("sendgrid.key")) {
+    console.log("KEY FILE DOES NOT EXIST");
+    console.log("Please create a file with the name of 'sendgrid.key' with your sendgrid API key.");
+    console.log("Note: Process killed to safeguard against broken production deployments. If you are just developing, you can create the file with some random text. It isn't validated until you try to send an email.");
+    process.exit(1);
+}
+
+if (!fs.existsSync("pggr-db/data.db")) {
+    console.log("DATABASE FILE DOES NOT EXIST");
+    console.log("pggr-db/data.db is missing. Wiki: https://github.com/viruzx/pggr-site/wiki/Data-Storage");
+    console.log("Hint: npm run import-db");
+    process.exit(1);
+}
+
+if (!fs.existsSync("node_modules")) {
+    console.log("DEPENDENCIES NOT INSTALLED");
+    console.log("node_modules are missing. Wiki: https://github.com/viruzx/pggr-site/wiki/Deploying");
+    console.log("Hint: npm install");
+    process.exit(1);
+}
+
+
 //Dependencies, all is needed. No touching.
 var express = require('express');
 var app = express();
-var fs = require("fs");
 var request = require('request');
 var Crypto = require('crypto');
 var bodyParser = require('body-parser')
@@ -12,18 +35,22 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(bodyParser.json())
 
+//Dealing with cookies
+app.use(require("cookie-parser")())
+
 
 //If this line is removed, everything breaks.
 var compiled = "";
 
 //Mailing services start
 
+
 //Configure SendGrid mailing service
 var nodemailer = require('nodemailer');
 var sgTransport = require('nodemailer-sendgrid-transport');
 var mailer = nodemailer.createTransport(sgTransport({
     auth: {
-        api_key: fs.readFileSync("sendgrid.key");
+        api_key: fs.readFileSync("sendgrid.key")
     }
 }));
 
@@ -95,6 +122,11 @@ function sql(query, callback = function(rows) {
 }
 
 
+/*
+    Converts an address, location or postal code to geographical coordinates.
+    Returns (lat, lng) if successful or (false, false) if failed.
+    Check for both being false, latitude 0 is theoretically possible...
+*/
 function postal2coord(postal, callback) {
     curl("http://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURI(postal) + "&sensor=true", function(data) {
         if (JSON.parse(data).results.length !== 0) {
@@ -108,13 +140,21 @@ function postal2coord(postal, callback) {
     });
 }
 
+/*
+    Adds a person to the database by taking an address/postal code,
+    converting it to coordinates and storing it along with an email.
 
+    Function can be assumed secure, it sanitizes input as necessary.
+*/
 function adduser(postal, contact, callback) {
     postal2coord(postal, function(lat, lng) {
         if (lat && lng) {
             sql("INSERT INTO liste_codepostaux (nb_personnes, courriel, lat, lng) VALUES (1, '" + sqlesc(contact) + "', '" + lat + "', '" + lng + "')", function(success) {
                 if (success) {
                     callback(true);
+
+                    //Update compiled data since database changed
+                    summary();
                 } else {
                     callback(false);
                 }
@@ -125,12 +165,13 @@ function adduser(postal, contact, callback) {
 
     });
 
-    //Update compiled data
-    summary();
 }
 
 
-
+/*
+    Update `compiled` variable with latest database summary.
+    Function can be overriden by a callback even if it's not really ever needed.
+*/
 function summary(callback = function(data) {
     compiled = data
 }) {
@@ -167,9 +208,6 @@ function summary(callback = function(data) {
 }
 summary();
 
-//Dealing with cookies
-app.use(require("cookie-parser")())
-
 /*
   openPage() returns the HTML of a requested page. If the page does not exist, it returns the HTML of the 404 error page.
 */
@@ -190,6 +228,13 @@ function openPage(lang, page, callback) {
         }
     });
 }
+
+/*
+    FILE ROUTER
+    This is the most important piece of the software.
+    Read wiki: https://github.com/viruzx/pggr-site/wiki/Defined-Routes
+*/
+
 
 //Handle legacy links from old website
 app.get('/:legacy', function(req, res, next) {
@@ -226,6 +271,7 @@ app.get('/:legacy', function(req, res, next) {
     }
 
 });
+
 
 app.get('/', function(req, res, next) {
     var lang = req.cookies.lang || "fr";
@@ -316,10 +362,6 @@ app.get('/dynamic/confirm/:subcode', function(req, res) {
 //Static files (css, js, images, etc)
 app.use("/static", express.static(__dirname + '/static'));
 
-app.listen(process.env.PORT || 3000, function() {
-    console.log('App ready!');
-});
-
 //Last handler, probably only 404s
 app.use(function(req, res, next) {
     res.status(404);
@@ -329,6 +371,10 @@ app.use(function(req, res, next) {
         res.send(data);
     });
 
+});
+
+app.listen(process.env.PORT || 3000, function() {
+    console.log('Deployed on port ', process.env.PORT || 3000);
 });
 
 
