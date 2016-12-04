@@ -78,7 +78,7 @@ function email(to, text, callback) {
 function contact(to, from, subject, text, callback) {
     var email = {
         to: to,
-        //Spoof email address for convinience
+        //Spoof email address for convenience
         from: from,
         //Custom subject
         subject: subject,
@@ -374,7 +374,7 @@ app.use(function(req, res, next) {
 });
 
 app.listen(process.env.PORT || 3000, function() {
-    console.log('Deployed on port ', process.env.PORT || 3000);
+    console.log('Deployed on port', process.env.PORT || 3000);
 });
 
 
