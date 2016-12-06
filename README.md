@@ -7,7 +7,7 @@ pggr-site is the central project behind [PGGR.org](https://www.pggr.org).
 To deploy the service, you need `git`, `node`, `npm` and appropriate cloning permissions (Consult me if unsure).
 
     //Clone repository
-    git clone git@github.com:viruzx/pggr-site.git
+    git clone git@github.com:PGGRorg/pggr-site.git
     //Move to directory
     cd pggr-site
     //Install required files
@@ -17,7 +17,7 @@ To deploy the service, you need `git`, `node`, `npm` and appropriate cloning per
     //Deploy app
     npm start
 
-[More detailed guide](https://github.com/viruzx/pggr-site/wiki/Deploying)
+[More detailed guide](https://github.com/PGGRorg/pggr-site/wiki/Deploying)
 
 ##Developing and contributing
-[View the wiki here](https://github.com/viruzx/pggr-site/wiki/Developing)
+[View the wiki here](https://github.com/PGGRorg/pggr-site/wiki/Developing)

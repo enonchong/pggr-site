@@ -9,14 +9,14 @@ if (!fs.existsSync("sendgrid.key")) {
 
 if (!fs.existsSync("pggr-db/data.db")) {
     console.log("DATABASE FILE DOES NOT EXIST");
-    console.log("pggr-db/data.db is missing. Wiki: https://github.com/viruzx/pggr-site/wiki/Data-Storage");
+    console.log("pggr-db/data.db is missing. Wiki: https://github.com/PGGRorg/pggr-site/wiki/Data-Storage");
     console.log("Hint: npm run import-db");
     process.exit(0);
 }
 
 if (!fs.existsSync("node_modules")) {
     console.log("DEPENDENCIES NOT INSTALLED");
-    console.log("node_modules are missing. Wiki: https://github.com/viruzx/pggr-site/wiki/Deploying");
+    console.log("node_modules are missing. Wiki: https://github.com/PGGRorg/pggr-site/wiki/Deploying");
     console.log("Hint: npm install");
     process.exit(0);
 }
@@ -232,7 +232,7 @@ function openPage(lang, page, callback) {
 /*
     FILE ROUTER
     This is the most important piece of the software.
-    Read wiki: https://github.com/viruzx/pggr-site/wiki/Defined-Routes
+    Read wiki: https://github.com/PGGRorg/pggr-site/wiki/Defined-Routes
 */
 
 
