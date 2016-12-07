@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "import-db": "git clone https://github.com/PGGRorg/pggr-db",
+    "import-db": "git clone https://github.com/viruzx/pggr-db",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
