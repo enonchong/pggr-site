@@ -4,21 +4,21 @@ if (!fs.existsSync("sendgrid.key") || !process.env.sendgrid) {
     console.log("KEY FILE DOES NOT EXIST");
     console.log("Please create a file with the name of 'sendgrid.key' with your sendgrid API key.");
     console.log("Note: Process killed to safeguard against broken production deployments. If you are just developing, you can create the file with some random text. It isn't validated until you try to send an email.");
-    process.exit(0);
+    process.exit(1);
 }
 
 if (!fs.existsSync("pggr-db/data.db")) {
     console.log("DATABASE FILE DOES NOT EXIST");
     console.log("pggr-db/data.db is missing. Wiki: https://github.com/PGGRorg/pggr-site/wiki/Data-Storage");
     console.log("Hint: npm run import-db");
-    process.exit(0);
+    process.exit(1);
 }
 
 if (!fs.existsSync("node_modules")) {
     console.log("DEPENDENCIES NOT INSTALLED");
     console.log("node_modules are missing. Wiki: https://github.com/PGGRorg/pggr-site/wiki/Deploying");
     console.log("Hint: npm install");
-    process.exit(0);
+    process.exit(1);
 }
 
 
