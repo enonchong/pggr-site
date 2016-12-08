@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "import-db": "git clone https://github.com/viruzx/pggr-db",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "git clone https://${GIT_USERNAME}:${GIT_PASSWD}@github.com/viruzx/pggr-db.git"
   },
   "engines": {
     "node": "4.1.1"
