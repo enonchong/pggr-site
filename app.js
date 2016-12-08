@@ -1,6 +1,6 @@
 var fs = require("fs");
 //Check for required files
-if (!fs.existsSync("sendgrid.key") && !process.env.sendgrid) {
+if (!fs.existsSync("sendgrid.key") || !process.env.sendgrid) {
     console.log("KEY FILE DOES NOT EXIST");
     console.log("Please create a file with the name of 'sendgrid.key' with your sendgrid API key.");
     console.log("Note: Process killed to safeguard against broken production deployments. If you are just developing, you can create the file with some random text. It isn't validated until you try to send an email.");
