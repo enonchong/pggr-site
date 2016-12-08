@@ -50,7 +50,7 @@ var nodemailer = require('nodemailer');
 var sgTransport = require('nodemailer-sendgrid-transport');
 var mailer = nodemailer.createTransport(sgTransport({
     auth: {
-        api_key: fs.readFileSync("sendgrid.key") || process.env.sendgrid
+        api_key: process.env.sendgrid || fs.readFileSync("sendgrid.key") 
     }
 }));
 
