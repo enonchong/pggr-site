@@ -1,9 +1,10 @@
 var fs = require("fs");
 //Check for required files
-if (!fs.existsSync("sendgrid.key") && !process.env.sendgrid) {
-    console.log("KEY FILE DOES NOT EXIST");
-    console.log("Please create a file with the name of 'sendgrid.key' with your sendgrid API key.");
-    console.log("Note: Process killed to safeguard against broken production deployments. If you are just developing, you can create the file with some random text. It isn't validated until you try to send an email.");
+if (!process.env.sendgrid) {
+    console.log("SENDGRID KEY MISSING");
+    console.log("Warning: System will not be able to send mail");
+    console.log("Process crashed to safe-guard against faulty production deployments.");
+    console.log("Hint: export sendgrid=api_key");
     process.exit(1);
 }
 
@@ -50,7 +51,7 @@ var nodemailer = require('nodemailer');
 var sgTransport = require('nodemailer-sendgrid-transport');
 var mailer = nodemailer.createTransport(sgTransport({
     auth: {
-        api_key: process.env.sendgrid || fs.readFileSync("sendgrid.key") 
+        api_key: process.env.sendgrid
     }
 }));
 
