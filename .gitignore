@@ -1,3 +1,5 @@
 node_modules
 pggr-db
 sendgrid.key
+.vscode
+npm-debug.log

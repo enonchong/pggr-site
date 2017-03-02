@@ -55,7 +55,12 @@ var mailer = nodemailer.createTransport(sgTransport({
     }
 }));
 
-//Send email to a single person (Designed for subscriptions)
+/**
+ * Send email to a single person (Designed for subscriptions)
+ * @param {String} to Recepient to email
+ * @param {String} text Body of email
+ * @param {Function} callback Status Callback
+ */
 function email(to, text, callback) {
     var email = {
         //Does HAVE to be an array, but whatever.
@@ -67,7 +72,7 @@ function email(to, text, callback) {
         text: text
     };
 
-    mailer.sendMail(email, function(err, res) {
+    mailer.sendMail(email, function (err, res) {
         if (err) {
             callback(false)
         }
@@ -76,6 +81,14 @@ function email(to, text, callback) {
 }
 
 //Mass mailing (to is an array)
+/**
+ * Sends out emails
+ * @param {(String|String[])} to Recepients to email
+ * @param {String} from Sender of email
+ * @param {String} subject Subject of email
+ * @param {String} text Body of email
+ * @param {Function} callback Callback
+ */
 function contact(to, from, subject, text, callback) {
     var email = {
         to: to,
@@ -87,7 +100,7 @@ function contact(to, from, subject, text, callback) {
         text: text + "\n---------------\nDelivered from PGGR.org by SendGrid"
     };
 
-    mailer.sendMail(email, function(err, res) {
+    mailer.sendMail(email, function (err, res) {
         if (err) {
             callback(false)
         }
@@ -103,17 +116,16 @@ function contact(to, from, subject, text, callback) {
 var sqlite3 = require("sqlite3").verbose();
 var db = new sqlite3.Database("pggr-db/data.db");
 
-//Simplified Querying
-/*
-    Just because it is abstracted, does NOT mean it is secure.
-    Escape queries with sqlesc() before passing.
-    sql("SELECT * FROM `TABLE` WHERE `x`=1")
-*/
-function sql(query, callback = function(rows) {
+/**
+ * Abstracts mysql querying. Just because it is abstracted, does NOT mean it is secure.
+ * @param {String} query MySQL query to be executed
+ * @param {Function} callback Callback containing the resulting rows
+ */
+function sql(query, callback = function (rows) {
     console.log("SQL Query ran")
     console.log(rows.length, "rows");
 }) {
-    db.all(query, function(err, rows) {
+    db.all(query, function (err, rows) {
         if (err) {
             callback(false);
             return 1;
@@ -123,13 +135,15 @@ function sql(query, callback = function(rows) {
 }
 
 
-/*
-    Converts an address, location or postal code to geographical coordinates.
-    Returns (lat, lng) if successful or (false, false) if failed.
-    Check for both being false, latitude 0 is theoretically possible...
-*/
+/**
+ * Converts an address, location or postal code to geographical coordinates.
+   Returns (lat, lng) if successful or (false, false) if failed.
+   Check for both being false, latitude 0 is theoretically possible...
+ * @param {String} postal Postal code to address
+ * @param {Function} callback Callback
+ */
 function postal2coord(postal, callback) {
-    curl("http://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURI(postal) + "&sensor=true", function(data) {
+    curl("http://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURI(postal) + "&sensor=true", function (data) {
         if (JSON.parse(data).results.length !== 0) {
             var location = JSON.parse(data).results[0].geometry.location;
             callback(location.lat, location.lng);
@@ -141,16 +155,19 @@ function postal2coord(postal, callback) {
     });
 }
 
-/*
-    Adds a person to the database by taking an address/postal code,
-    converting it to coordinates and storing it along with an email.
 
-    Function can be assumed secure, it sanitizes input as necessary.
-*/
+/**
+ * Adds a person to the database by taking an address/postal code,
+   converting it to coordinates and storing it along with an email.
+   Prior sanitization is not necessary
+ * @param {String} postal Location of user to be added
+ * @param {String} contact Email of user to be added
+ * @param {Function} callback Callback
+ */
 function adduser(postal, contact, callback) {
-    postal2coord(postal, function(lat, lng) {
+    postal2coord(postal, function (lat, lng) {
         if (lat && lng) {
-            sql("INSERT INTO liste_codepostaux (nb_personnes, courriel, lat, lng) VALUES (1, '" + sqlesc(contact) + "', '" + lat + "', '" + lng + "')", function(success) {
+            sql("INSERT INTO liste_codepostaux (nb_personnes, courriel, lat, lng) VALUES (1, '" + sqlesc(contact) + "', '" + lat + "', '" + lng + "')", function (success) {
                 if (success) {
                     callback(true);
 
@@ -169,20 +186,20 @@ function adduser(postal, contact, callback) {
 }
 
 
-/*
-    Update `compiled` variable with latest database summary.
-    Function can be overriden by a callback even if it's not really ever needed.
-*/
-function summary(callback = function(data) {
+/**
+ * Update `compiled` variable with latest database summary. Function can be overriden by a callback even if it's not really ever needed.
+ * @param {Function} callback 
+ */
+function summary(callback = function (data) {
     compiled = data
 }) {
-    sql("Select * from liste_codepostaux", function(rows) {
+    sql("Select * from liste_codepostaux", function (rows) {
         //Summary of entire database
 
         //Process matches via associative array
         var results1 = {}
 
-        rows.forEach(function(value, index, array) {
+        rows.forEach(function (value, index, array) {
             var index = value.lat + " " + value.lng;
             if (results1[index]) {
                 results1[index] += value.nb_personnes;
@@ -209,17 +226,20 @@ function summary(callback = function(data) {
 }
 summary();
 
-/*
-  openPage() returns the HTML of a requested page. If the page does not exist, it returns the HTML of the 404 error page.
-*/
+/**
+ * openPage() returns the HTML of a requested page. If the page does not exist, it returns the HTML of the 404 error page.
+ * @param {String} lang Language of requested page
+ * @param {String} page Requested page
+ * @param {Function} callback Callback
+ */
 function openPage(lang, page, callback) {
     //Read relevant html file
-    fs.readFile("html/" + lang + "/" + page + ".html", function(err, data) {
+    fs.readFile("html/" + lang + "/" + page + ".html", function (err, data) {
         if (err) {
             //file does not exist
             fs.readFile("html/" + lang + "/" + "404.html", {
                 encoding: 'utf-8'
-            }, function(err, errorPage) {
+            }, function (err, errorPage) {
                 //send 404 html
                 callback(errorPage);
             })
@@ -238,7 +258,7 @@ function openPage(lang, page, callback) {
 
 
 //Handle legacy links from old website
-app.get('/:legacy', function(req, res, next) {
+app.get('/:legacy', function (req, res, next) {
     var legacy = req.params.legacy;
     var lang = req.cookies.lang || "fr";
     switch (legacy) {
@@ -274,7 +294,7 @@ app.get('/:legacy', function(req, res, next) {
 });
 
 
-app.get('/', function(req, res, next) {
+app.get('/', function (req, res, next) {
     var lang = req.cookies.lang || "fr";
     res.statusCode = 302;
     res.setHeader('Location', '/' + lang + '/home');
@@ -282,7 +302,7 @@ app.get('/', function(req, res, next) {
 });
 
 //Language switch
-app.get('/:lang', function(req, res, next) {
+app.get('/:lang', function (req, res, next) {
     var lang = req.params.lang.toLowerCase();
     if (lang == "en" || lang == "fr") {
         res.cookie("lang", lang);
@@ -296,12 +316,12 @@ app.get('/:lang', function(req, res, next) {
 });
 
 
-app.get('/:lang/:page', function(req, res, next) {
+app.get('/:lang/:page', function (req, res, next) {
     var lang = req.params.lang.toLowerCase();
     var page = req.params.page.toLowerCase();
     if (lang == "en" || lang == "fr") {
         res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-        openPage(lang, page, function(data) {
+        openPage(lang, page, function (data) {
             res.send(data);
         });
     } else {
@@ -309,20 +329,20 @@ app.get('/:lang/:page', function(req, res, next) {
     }
 });
 
-app.get('/dynamic/compiled.js', function(req, res) {
+app.get('/dynamic/compiled.js', function (req, res) {
     res.send("var summary=" + JSON.stringify(compiled));
 });
 
 var pending = {};
-app.post('/dynamic/subscribe', function(req, res) {
-    postal2coord("", function (lat, lng){
-        if (lat && lng){
+app.post('/dynamic/subscribe', function (req, res) {
+    postal2coord("", function (lat, lng) {
+        if (lat && lng) {
             var token = randomStr();
             pending[token] = {
                 postal: req.body.postal,
                 contact: req.body.contact
             };
-            email(req.body.contact, "You signed up, click here: http://localhost:3000/dynamic/confirm/" + token, function(success) {
+            email(req.body.contact, "You signed up, click here: http://localhost:3000/dynamic/confirm/" + token, function (success) {
                 if (success) {
                     //Success
                     res.send("1");
@@ -342,8 +362,8 @@ app.post('/dynamic/subscribe', function(req, res) {
 });
 
 
-app.post('/dynamic/contact', function(req, res) {
-    contact(["slava@knyz.org"], req.body.from, req.body.subject, req.body.text, function(success) {
+app.post('/dynamic/contact', function (req, res) {
+    contact(["slava@knyz.org"], req.body.from, req.body.subject, req.body.text, function (success) {
         if (success) {
             res.send("Sent");
         } else {
@@ -353,13 +373,13 @@ app.post('/dynamic/contact', function(req, res) {
 
 });
 
-app.get('/dynamic/confirm/:subcode', function(req, res) {
+app.get('/dynamic/confirm/:subcode', function (req, res) {
     var data = pending[req.params.subcode];
     if (!data) {
         //Sub link does not exist
         res.send("Code does not exist in live memory");
     } else {
-        adduser(data.postal, data.contact, function(success) {
+        adduser(data.postal, data.contact, function (success) {
             if (!success) {
                 res.send("Database refused entry. Already signed up?");
             } else {
@@ -375,22 +395,22 @@ app.get('/dynamic/confirm/:subcode', function(req, res) {
 app.use("/static", express.static(__dirname + '/static'));
 
 //Last handler, probably only 404s
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.status(404);
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     var lang = req.cookies.lang || "fr";
-    openPage(lang, "404", function(data) {
+    openPage(lang, "404", function (data) {
         res.send(data);
     });
 
 });
 
-app.listen(process.env.PORT || 3000, function() {
+app.listen(process.env.PORT || 3000, function () {
     console.log('Deployed on port', process.env.PORT || 3000);
 });
 
 module.exports = {
-  app: app
+    app: app
 };
 
 //Utility functions
@@ -399,7 +419,7 @@ function randomStr() {
 }
 //Send web request
 function curl(url, callback) {
-    request(url, function(error, response, body) {
+    request(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             callback(body)
         } else {
@@ -407,9 +427,13 @@ function curl(url, callback) {
         }
     })
 }
-//Escape SQL
+
+/**
+ * Escapes input for mySQL
+ * @param {String} a String to escape
+ */
 function sqlesc(a) {
-    return a.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(a) {
+    return a.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (a) {
         switch (a) {
             case "\0":
                 return "\\0";
